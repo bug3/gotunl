@@ -126,10 +126,10 @@ func disconnect(gt *gotunl.Gotunl, id string) {
 
 }
 
-func connect(gt *gotunl.Gotunl, id string, pin string, otp string) {
+func connect(gt *gotunl.Gotunl, id string, pin string, otp string, user string, pass string) {
 	for pid, p := range gt.Profiles {
 		if id == gjson.Get(p.Conf, "name").String() || id == strconv.Itoa(p.ID) {
-			gt.ConnectProfile(pid, pin, otp, "", "")
+			gt.ConnectProfile(pid, pin, otp, user, pass)
 		}
 	}
 }
@@ -172,6 +172,10 @@ func usage(a *flag.Flag) {
 		fmt.Printf("  -%v <pin>\t%v\n", a.Name, a.Usage)
 	} else if a.Name == "otp" {
 		fmt.Printf("  -%v <otp>\t%v\n", a.Name, a.Usage)
+	} else if a.Name == "un" {
+		fmt.Printf("  -%v <user>\t%v\n", a.Name, a.Usage)
+	} else if a.Name == "pass" {
+		fmt.Printf("  -%v <pass>\t%v\n", a.Name, a.Usage)
 	} else {
 		fmt.Printf("  -%v <profile>\t%v\n", a.Name, a.Usage)
 	}
@@ -190,6 +194,8 @@ func main() {
 	o := flag.String("o", "table", "Output format table|tsv (default is table)")
 	pin := flag.String("pin", "", "Pin code")
 	otp := flag.String("otp", "", "Otp code")
+	un := flag.String("un", "", "User name")
+	pass := flag.String("pass", "", "Password")
 	v := flag.Bool("v", false, "Show version")
 
 	flag.Parse()
@@ -202,7 +208,7 @@ func main() {
 		os.Exit(0)
 	}
 	if *c != "" {
-		connect(&gt, *c, *pin, *otp)
+		connect(&gt, *c, *pin, *otp, *un, *pass)
 		os.Exit(0)
 	}
 	if *d != "" {

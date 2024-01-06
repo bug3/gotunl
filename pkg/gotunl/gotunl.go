@@ -197,11 +197,11 @@ func (g Gotunl) GetProfile(id string) (string, string) {
 func (g Gotunl) ConnectProfile(id string, pin string, otp string, user string, password string) {
 	data := fmt.Sprintf(`{"id": "%v", "reconnect": true, "timeout": true}`, id)
 	ovpn, auth := g.GetProfile(id)
-	if (auth != "") && (user == "" || password == "") {
+	if (auth != "") && (user == "" && password == "") {
 		auth_method := auth[len(auth)-3:]
 		if auth_method == "otp" || auth_method == "pin" {
 			user = "pritunl"
-			if len(pin) == 0 && len(otp) == 0 {
+			if pin == "" && otp == "" {
 				fmt.Printf("Enter the PIN: ")
 				pass, err := term.ReadPassword(int(os.Stdin.Fd()))
 				if err != nil {
@@ -209,7 +209,7 @@ func (g Gotunl) ConnectProfile(id string, pin string, otp string, user string, p
 				}
 				fmt.Println()
 				password = string(pass) + otp
-			} else if strings.Contains(auth, "otp") && len(otp) == 0 && len(pin) == 0 {
+			} else if strings.Contains(auth, "otp") && pin == "" && otp == "" {
 				fmt.Printf("\nEnter the OTP code: ")
 				fmt.Scanln(&otp)
 				password = string(pin) + otp
