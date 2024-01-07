@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
@@ -231,6 +232,40 @@ func (g Gotunl) ConnectProfile(id string, pin string, otp string, user string, p
 	data, _ = sjson.Set(data, "password", password)
 	data, _ = sjson.Set(data, "data", ovpn)
 	g.makeReq("POST", "profile", data)
+
+	checkConnectionStatus(g, id, "Disconnected")
+}
+
+func checkConnectionStatus(g Gotunl, id string, status string) {
+	conStatus := strings.Title(gjson.Get(g.GetConnections(), id + ".status").String())
+
+	if conStatus == "Connecting" && status != "Connecting" {
+		fmt.Println("Connecting")
+
+		status = "Connecting"
+	}
+
+	if conStatus == "Disconnecting" && status != "Disconnecting" {
+		fmt.Println("Disconnecting")
+
+		status = "Disconnecting"
+	}
+
+	if conStatus == "Connected" {
+		fmt.Println("Connected")
+
+		os.Exit(0)
+	}
+
+	if conStatus == "" && status == "Disconnecting" {
+		fmt.Println("Disconnected")
+
+		os.Exit(0)
+	}
+
+	time.Sleep(time.Millisecond * 333)
+
+	checkConnectionStatus(g, id, status)
 }
 
 func (g Gotunl) DisconnectProfile(id string) {
