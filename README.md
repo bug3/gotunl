@@ -23,11 +23,15 @@ Alternatively, you can download a pre-compiled version from https://github.com/c
 Pritunl command line client
 
 Usage:
-  -c <profile>	Connect to profile ID or Name
-  -d <profile>	Disconnect profile or "all"
-  -l 		        List connections
-  -o <output>	Output format table|tsv (default is table)
-  -v 		        Show version
+  -c <profile>  Connect to profile ID or Name
+  -d <profile>  Disconnect profile or "all"
+  -l            List connections
+  -o <output>   Output format table|tsv (default is table)
+  -otp <otp>    Otp code
+  -pass <pass>  Password
+  -pin <pin>    Pin code
+  -un <user>    User name
+  -v            Show version
 ```
 
 
@@ -45,6 +49,9 @@ $ ./gotunl -l
 |  5 | Test VPN               | Disconnected |
 +----+------------------------+--------------+
 $ ./gotunl -c 3
+Enter the PIN: *************
+$ ./gotunl -c 2 -otp 123456
+$ ./gotunl -c 1 -un username -pass password
 $ ./gotunl -c "Test VPN"
 Enter the username: user1
 Enter the password: *************
