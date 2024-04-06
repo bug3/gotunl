@@ -14,8 +14,6 @@ cd gotunl
 go install
 ```
 
-Alternatively, you can download a pre-compiled version from https://github.com/cghdev/gotunl/releases/latest
-
 ##  Usage:
 
 ```bash
