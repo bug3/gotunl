@@ -3,14 +3,12 @@ package gotunl
 import (
 	"bytes"
 	"context"
-	b64 "encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -174,25 +172,10 @@ func (g Gotunl) GetProfile(id string) (string, string) {
 	if auth != "" && strings.Contains(prof.Conf, "password_mode") && mode != "" {
 		auth = mode
 	}
-	if runtime.GOOS == "darwin" {
-		command := "security find-generic-password -w -s pritunl -a " + id
-		out, err := exec.Command("bash", "-c", command).Output()
-		if err != nil {
-			if strings.Contains("exit status 36", err.Error()) {
-				log.Println("There was an error accessing the Keychain (probably connected through SSH)")
-				log.Fatal("Run '/usr/bin/security unlock-keychain' to unlock the Keychain and try again")
-			}
-			log.Fatalf("Error getting profiles (find-generic-password): %s\n", err)
-		}
-		res, err := b64.StdEncoding.DecodeString(string(out))
-		if err != nil {
-			log.Fatalf("Error decoding base64: %s\n", err)
-		}
-		key = string(res)
-	}
-	vpn := string(ovpn) + "\n" + key
-	return vpn, auth
 
+	vpn := string(ovpn) + "\n" + key
+
+	return vpn, auth
 }
 
 func (g Gotunl) ConnectProfile(id string, pin string, otp string, user string, password string) {
